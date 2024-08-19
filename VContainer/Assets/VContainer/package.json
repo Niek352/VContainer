@@ -6,6 +6,10 @@
   "description": "The extra fast DI (Dependency Injection) for Unity",
   "keywords": ["DI", "Dependency Injection", "DI Container"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Niek352/VContainer.git"
+  },
   "documentationUrl": "https://vcontainer.hadashikick.jp/",
   "changelogUrl": "https://github.com/hadashiA/VContainer/releases",
   "licensesUrl": "https://github.com/hadashiA/VContainer/blob/master/LICENSE"
