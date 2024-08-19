@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using VContainer.Extensions;
 using VContainer.Internal;
 
 namespace VContainer
@@ -20,13 +23,37 @@ namespace VContainer
 
         public virtual Registration Build()
         {
-            var injector = InjectorCache.GetOrBuild(ImplementationType);
+            var implementationType = ImplementationType;
+            var interfaces = InterfaceTypes;
+            
+#if UNITY_INCLUDE_TESTS            
+            implementationType = Substitute(implementationType, ref interfaces);
+#endif
+            
+            var injector = InjectorCache.GetOrBuild(implementationType);
             var spawner = new InstanceProvider(injector, Parameters);
             return new Registration(
-                ImplementationType,
+                implementationType,
                 Lifetime,
-                InterfaceTypes,
+                interfaces,
                 spawner);
+        }
+        
+        private Type Substitute(Type implementationType, ref List<Type> interfaces)
+        {
+            if (InterfaceTypes is not null)
+            {
+                foreach (var interfaceType in InterfaceTypes)
+                {
+                    if (InstallerSubstitution.TryGetSubstitution(interfaceType, out var substitution))
+                    {
+                        Debug.Log($"Implementation {implementationType.FullName} substitute for {substitution.FullName}");
+                        implementationType = substitution;
+                        interfaces = implementationType.GetInterfaces().ToList();
+                    }
+                }
+            }
+            return implementationType;
         }
 
         public RegistrationBuilder As<TInterface>()

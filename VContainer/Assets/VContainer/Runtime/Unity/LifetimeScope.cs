@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer.Diagnostics;
+using VContainer.Extensions;
 using VContainer.Internal;
 
 namespace VContainer.Unity
@@ -10,6 +11,12 @@ namespace VContainer.Unity
     [DefaultExecutionOrder(-5000)]
     public partial class LifetimeScope : MonoBehaviour, IDisposable
     {
+        [SerializeField]
+#if ODIN_INSPECTOR
+        [AssetSelector(Paths = "Assets/Settings/Installers")]
+#endif
+        private List<ScriptableObjectInstaller> _scriptableObjectInstallers = new List<ScriptableObjectInstaller>();
+        [SerializeField] private List<MonoInstaller> _monoInstallers = new List<MonoInstaller>();
         public readonly struct ParentOverrideScope : IDisposable
         {
             public ParentOverrideScope(LifetimeScope nextParent)
