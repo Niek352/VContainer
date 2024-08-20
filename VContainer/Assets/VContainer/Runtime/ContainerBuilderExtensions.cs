@@ -65,6 +65,13 @@ namespace VContainer
             => builder.Register(new InstanceRegistrationBuilder(instance)).As(typeof(TInterface));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static RegistrationBuilder RegisterInstance<TInterface, TInstance>(
+            this IContainerBuilder builder,
+            TInstance instance)
+            where TInstance : TInterface
+            => builder.Register(new InstanceRegistrationBuilder(instance)).As(typeof(TInterface));
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static RegistrationBuilder RegisterInstance<TInterface1, TInterface2>(
             this IContainerBuilder builder,
             TInterface1 instance)
