@@ -37,6 +37,7 @@ namespace VContainer.Unity
 
         ComponentDestination destination;
         Scene scene;
+        private bool disableAfterCreation;
 
         internal ComponentRegistrationBuilder(object instance)
             : base(instance.GetType(), Lifetime.Singleton)
@@ -84,7 +85,7 @@ namespace VContainer.Unity
             else if (prefabFinder != null)
             {
                 var injector = InjectorCache.GetOrBuild(ImplementationType);
-                provider = new PrefabComponentProvider(prefabFinder, injector, Parameters, in destination);
+                provider = new PrefabComponentProvider(prefabFinder, injector, Parameters, in destination, disableAfterCreation);
             }
             else
             {
@@ -109,6 +110,12 @@ namespace VContainer.Unity
         public ComponentRegistrationBuilder UnderTransform(Func<IObjectResolver, Transform> parentFinder)
         {
             destination.ParentFinder = parentFinder;
+            return this;
+        }
+
+        public ComponentRegistrationBuilder DisableAfterCreation(bool value = true)
+        {
+            disableAfterCreation = value;
             return this;
         }
 

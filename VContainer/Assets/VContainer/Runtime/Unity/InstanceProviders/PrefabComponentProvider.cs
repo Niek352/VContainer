@@ -10,17 +10,19 @@ namespace VContainer.Unity
         readonly IReadOnlyList<IInjectParameter> customParameters;
         readonly Func<IObjectResolver, Component> prefabFinder;
         ComponentDestination destination;
+        private readonly bool disableAfterCreation;
 
-        public PrefabComponentProvider(
-            Func<IObjectResolver, Component> prefabFinder,
+        public PrefabComponentProvider(Func<IObjectResolver, Component> prefabFinder,
             IInjector injector,
             IReadOnlyList<IInjectParameter> customParameters,
-            in ComponentDestination destination)
+            in ComponentDestination destination, 
+            bool disableAfterCreation)
         {
             this.injector = injector;
             this.customParameters = customParameters;
             this.prefabFinder = prefabFinder;
             this.destination = destination;
+            this.disableAfterCreation = disableAfterCreation;
         }
 
         public object SpawnInstance(IObjectResolver resolver)
@@ -54,7 +56,10 @@ namespace VContainer.Unity
                     component.gameObject.SetActive(true);
                 }
             }
-
+            
+            if(disableAfterCreation)
+                component.gameObject.SetActive(false);
+            
             return component;
         }
     }
