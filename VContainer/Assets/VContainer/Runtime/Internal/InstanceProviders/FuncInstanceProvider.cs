@@ -15,4 +15,19 @@ namespace VContainer.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object SpawnInstance(IObjectResolver resolver) => implementationProvider(resolver);
     }
+    
+    sealed class FuncInstanceProviderContexted : IInstanceProvider
+    {
+        readonly Func<object, IObjectResolver, object> implementationProvider;
+        private readonly object context;
+
+        public FuncInstanceProviderContexted(Func<object, IObjectResolver, object> implementationProvider, object context)
+        {
+            this.implementationProvider = implementationProvider;
+            this.context = context;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public object SpawnInstance(IObjectResolver resolver) => implementationProvider(context, resolver);
+    }
 }

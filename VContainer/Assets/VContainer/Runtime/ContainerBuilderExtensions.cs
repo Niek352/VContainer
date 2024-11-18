@@ -57,6 +57,14 @@ namespace VContainer
             Func<IObjectResolver, TInterface> implementationConfiguration,
             Lifetime lifetime)
             => builder.Register(new FuncRegistrationBuilder(container => implementationConfiguration(container), typeof(TInterface), lifetime));
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static RegistrationBuilder Register<TInterface>(
+            this IContainerBuilder builder,
+            object context,
+            Func<object, IObjectResolver, object> implementationConfiguration,
+            Lifetime lifetime)
+            => builder.Register(new FuncRegistrationBuilderContexted(context, implementationConfiguration, typeof(TInterface), lifetime));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static RegistrationBuilder RegisterInstance<TInterface>(

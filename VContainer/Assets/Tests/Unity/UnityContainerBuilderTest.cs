@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -62,6 +63,23 @@ namespace VContainer.Tests.Unity
             var container = builder.Build();
 
             Assert.That(container.Resolve<IComponent>(), Is.EqualTo(component));
+        }
+        
+        [Test]
+        public void RegisterComponentsAsInterface()
+        {
+            var component1 = new GameObject("SampleBehaviour1").AddComponent<SampleMonoBehaviour>();
+            var component2 = new GameObject("SampleBehaviour2").AddComponent<SampleMonoBehaviour>();
+            var builder = new ContainerBuilder();
+            builder.Register<ServiceA>(Lifetime.Transient);
+            builder.Register<IComponent>(component1, (o, _) => o, Lifetime.Scoped);
+            builder.Register<IComponent>(component2, (o, _) => o, Lifetime.Scoped);
+
+            var container = builder.Build();
+
+            var scoped = container.Resolve<IEnumerable<IComponent>>().ToArray();
+            Assert.Contains(component1, scoped);
+            Assert.Contains(component2, scoped);
         }
         
         [Test]
