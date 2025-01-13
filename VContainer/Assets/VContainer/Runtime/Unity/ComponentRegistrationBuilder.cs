@@ -46,7 +46,7 @@ namespace VContainer.Unity
         }
 
         internal ComponentRegistrationBuilder(in Scene scene, Type implementationType)
-            : base(implementationType, Lifetime.Scoped)
+            : base(implementationType, Lifetime.Singleton)
         {
             this.scene = scene;
         }
