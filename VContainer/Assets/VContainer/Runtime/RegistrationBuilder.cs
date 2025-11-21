@@ -37,6 +37,7 @@ namespace VContainer
                 implementationType,
                 Lifetime,
                 interfaces,
+                spawner,
                 Key);
         }
         
