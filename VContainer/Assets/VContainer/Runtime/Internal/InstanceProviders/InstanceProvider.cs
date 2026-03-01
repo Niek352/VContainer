@@ -31,5 +31,12 @@ namespace VContainer.Internal
             var injector = ReflectionInjector.Build(typeof(T));
             return (T)injector.CreateInstance(resolver, injectParameters);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Instantiate<T>(this IObjectResolver resolver, ReadonlySpan<IInjectParameter> injectParameters)
+        {
+            var injector = ReflectionInjector.Build(typeof(T));
+            return (T)injector.CreateInstanceWithSpan(resolver, injectParameters);
+        }
     } 
 }
