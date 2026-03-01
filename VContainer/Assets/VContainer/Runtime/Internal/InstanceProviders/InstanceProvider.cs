@@ -34,7 +34,7 @@ namespace VContainer.Internal
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Instantiate<T>(this IObjectResolver resolver, ReadonlySpan<IInjectParameter> injectParameters)
+        public static T Instantiate<T>(this IObjectResolver resolver, ReadOnlySpan<IInjectParameter> injectParameters)
         {
             var injector = ReflectionInjector.Build(typeof(T));
             return (T)injector.CreateInstanceWithSpan(resolver, injectParameters);
