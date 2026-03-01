@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace VContainer.Internal
