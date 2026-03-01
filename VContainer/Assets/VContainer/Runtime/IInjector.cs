@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 
 namespace VContainer
 {
@@ -6,5 +7,8 @@ namespace VContainer
     {
         void Inject(object instance, IObjectResolver resolver, IReadOnlyList<IInjectParameter> parameters);
         object CreateInstance(IObjectResolver resolver, IReadOnlyList<IInjectParameter> parameters);
+        
+        void InjectWithSpan(object instance, IObjectResolver resolver, ReadOnlySpan<IInjectParameter> parameters);
+        object CreateInstanceWithSpan(IObjectResolver resolver, ReadOnlySpan<IInjectParameter> parameters);
     }
 }

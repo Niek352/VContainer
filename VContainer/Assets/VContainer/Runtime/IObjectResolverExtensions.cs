@@ -49,7 +49,7 @@ namespace VContainer
             {
                 return resolver.Resolve(parameterType, key);
             }
-            
+
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < parameters.Count; i++)
             {
@@ -58,6 +58,29 @@ namespace VContainer
                 {
                     return parameter.GetValue(resolver);
                 }
+            }
+
+            return key != null ?
+                resolver.Resolve(parameterType, key) :
+                resolver.Resolve(parameterType);
+        }
+
+        public static object ResolveOrParameter(
+            this IObjectResolver resolver,
+            Type parameterType,
+            string parameterName,
+            ReadOnlySpan<IInjectParameter> parameters,
+            object key = null)
+        {
+            if (parameters == null)
+            {
+                return resolver.Resolve(parameterType, key);
+            }
+
+            foreach (var injectParameter in parameters)
+            {
+                if (injectParameter.Match(parameterType, parameterName))
+                    return injectParameter.GetValue(resolver);
             }
 
             return key != null ?
