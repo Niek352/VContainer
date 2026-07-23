@@ -23,6 +23,7 @@ public class VContainerSourceGenerator : ISourceGenerator
 
         var codeWriter = new CodeWriter();
         var syntaxCollector = (SyntaxCollector)context.SyntaxReceiver!;
+        var generatedTypes = new System.Collections.Generic.HashSet<ISymbol>(SymbolEqualityComparer.Default);
         foreach (var workItem in syntaxCollector.WorkItems)
         {
             if (workItem.TypeDeclarationSyntax is { } typeDeclarationSyntax)
@@ -31,6 +32,8 @@ public class VContainerSourceGenerator : ISourceGenerator
                 var typeDeclarationCandidate = new TypeDeclarationCandidate(typeDeclarationSyntax, semanticModel);
                 if (typeDeclarationCandidate.Analyze(references) is { } typeMeta)
                 {
+                    if (!generatedTypes.Add(typeMeta.Symbol)) continue;
+
                     Execute(typeMeta, codeWriter, references, in context);
                     codeWriter.Clear();
                 }
@@ -42,6 +45,8 @@ public class VContainerSourceGenerator : ISourceGenerator
                 var typeMetas = registerInvocationCandidate.Analyze(references);
                 foreach (var typeMeta in typeMetas)
                 {
+                    if (!generatedTypes.Add(typeMeta.Symbol)) continue;
+
                     Execute(typeMeta, codeWriter, references, in context);
                     codeWriter.Clear();
                 }
@@ -51,13 +56,19 @@ public class VContainerSourceGenerator : ISourceGenerator
 
     static void Execute(TypeMeta typeMeta, CodeWriter codeWriter, ReferenceSymbols referenceSymbols, in GeneratorExecutionContext context)
     {
-        if (Emitter.TryEmitGeneratedInjector(typeMeta, codeWriter, referenceSymbols, in context))
+        var diagnostics = new System.Collections.Generic.List<DiagnosticInfo>();
+        var model = InjectorModelBuilder.Build(typeMeta, referenceSymbols);
+        if (Emitter.TryEmitGeneratedInjector(model, codeWriter, diagnostics))
         {
             var fullType = typeMeta.FullTypeName
                 .Replace("global::", "")
                 .Replace("<", "_")
                 .Replace(">", "_");
             context.AddSource($"{fullType}GeneratedInjector.g.cs", codeWriter.ToString());
+        }
+        foreach (var diagnostic in diagnostics)
+        {
+            context.ReportDiagnostic(diagnostic.ToDiagnostic());
         }
     }
 }

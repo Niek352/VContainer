@@ -15,7 +15,10 @@ namespace VContainer.Unity
             if (containerBuilder.Exists(typeof(EntryPointDispatcher), false)) return;
             containerBuilder.Register<EntryPointDispatcher>(Lifetime.Scoped);
 
-            containerBuilder.RegisterEntryPointExceptionHandler(UnityEngine.Debug.LogException);
+            if (!containerBuilder.Exists(typeof(EntryPointExceptionHandler)))
+            {
+                containerBuilder.RegisterEntryPointExceptionHandler(UnityEngine.Debug.LogException);
+            }
 
             containerBuilder.RegisterBuildCallback(container =>
             {
@@ -132,7 +135,7 @@ namespace VContainer.Unity
         {
             var registrationBuilder = new ComponentRegistrationBuilder(component).As(typeof(TInterface));
             // Force inject execution
-            builder.RegisterBuildCallback(container => container.Resolve<TInterface>());
+            builder.RegisterBuildCallback(container => container.Resolve<TInterface>(registrationBuilder.Key));
             return builder.Register(registrationBuilder);
         }
 
@@ -151,7 +154,8 @@ namespace VContainer.Unity
                     container.Resolve(
                         registrationBuilder.InterfaceTypes != null
                             ? registrationBuilder.InterfaceTypes[0]
-                            : registrationBuilder.ImplementationType
+                            : registrationBuilder.ImplementationType,
+                        registrationBuilder.Key
                     );
                 }
             );
