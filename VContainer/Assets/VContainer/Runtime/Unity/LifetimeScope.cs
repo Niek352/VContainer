@@ -140,7 +140,7 @@ namespace VContainer.Unity
         {
             if (VContainerSettings.DiagnosticsEnabled && string.IsNullOrEmpty(scopeName))
             {
-                scopeName = $"{name} ({gameObject.GetInstanceID()})";
+                scopeName = $"{name} ({gameObject.GetEntityId()})";
             }
             try
             {
